@@ -1,0 +1,58 @@
+#!usr/bin/perl -w
+
+use List::Util qw[min max];
+use POSIX;
+#>>>>>DONE-------------------test lc,uc for letter upper lower class alternation
+#$lala = "i LOVEe you1";
+#$nana = lc($lala);
+#print "$nana\n";
+
+#$me = ceil(84.6);
+#print "$me\n";
+#>>>>>DONE####################################
+sub get_seq { #get sequence of the alignments
+        my @yqh = @_;#input:
+##species chr   start sl  end  el##
+##   0     1     2    3    4   5 ##
+open MY, "../data/$yqh[0]/$yqh[1]"; #arguments are $genome{$species}{$chr}, input CHR!!!!
+open TMP, ">../data/$yqh[0]/tmp";#store the compare sequence in tmp file     
+        my $sl = $yqh[3];
+        my $el = $yqh[5];
+        my $s = $yqh[2] - ($sl-1)*50 - 1 ;
+        my $e = $yqh[4] - ($el-1)*50 - 1 ;
+        my @sequence = <MY>;
+        chomp @sequence;
+        my $primary1 = $sequence[$sl];
+        my $primary2 = $sequence[$el];
+    
+        my @tmp = split "",$primary1;
+        my @pri1 = @tmp[$s..$#tmp];
+        my $p1 = join "\n",@pri1;#primary 1
+    
+        @tmp = split "",$primary2;
+        my @pri2 = @tmp[0..$e];
+        my $p2 = join "\n",@pri2;#primary 2
+    
+        print TMP "$p1\n";
+        close MY;
+open MY, "../data/$yqh[0]/$yqh[1]";
+        my $n = 0;
+        while (<MY>){
+        chomp;
+ next if ($. <= $yqh[3]);#yqh3 is start line
+        last if ($. >= $yqh[5]);#yqh5 is end line
+        @tmp =split "",$_;
+        my $oo = join "\n",@tmp;
+        print TMP "$oo\n";
+        }
+close MY;
+print TMP "$p2\n";
+close TMP;
+my $dir = "../data$yqh[0]/tmp";
+return ($dir);
+}
+
+
+#>>>>>DONE
+@x = get_seq("hg19","chr1",87771,1756,248804627,4976093);
+print "@x\n";

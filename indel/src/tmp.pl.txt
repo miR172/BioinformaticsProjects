@@ -1,0 +1,16 @@
+$n =2; 
+open A, "../data/pair/divergence/$n.out";
+@o = <A>;
+chomp @o;
+$nline = $#o +1;
+print "number of lines: $nline\n";
+$max = 1;
+foreach $r(@o){
+        @tmp = split "\t",$r;
+        if ($max < $#tmp){$max = $#tmp+1}
+        else{next}
+}
+close A;
+print "MAX: $max\n";
+
+system("Rscript compute1.R $n $max $nline")
